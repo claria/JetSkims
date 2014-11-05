@@ -9,7 +9,7 @@ def get_process(datatype, globaltag):
 	is_data = datatype.lower() == 'data'
 	
 	if is_data:
-		globaltag = globaltag if globaltag else 'FT53_V21A_AN6::All'
+		globaltag = globaltag if globaltag else 'FT_53_V6C_AN4::All'
 		filename = 'root://xrootd.unl.edu//store/data/Run2012D/JetMon/AOD/22Jan2013-v1/10000/00187058-1792-E211-AF2C-90B11C18BECE.root'
 	else:
 		globaltag = globaltag if globaltag else 'START53_V26::All'
@@ -44,7 +44,7 @@ def get_process(datatype, globaltag):
 		outputFile = cms.string('skim.root'),
 	)
 	process.kappatuple.PFJets.minPt = cms.double(25)
-	process.kappatuple.verbose = cms.int32(0)
+	process.kappatuple.verbose = cms.int32(3)
 	process.kappatuple.active = cms.vstring(
 		'LV', 'TrackSummary', 'VertexSummary', 'PFMET', 'PFJets', 'JetArea',
 	)
@@ -56,9 +56,15 @@ def get_process(datatype, globaltag):
 		process.kappatuple.active.append('GenParticles')
 	
 	process.kappatuple.Metadata.hltWhitelist = cms.vstring(
-		"^HLT_PFJet[0-9]+(U)?(_NoJetID)?(_v[[:digit:]]+)?$",
+		"^HLT_PFJet40(U)?(_NoJetID)?(_v[[:digit:]]+)?$",
+		"^HLT_PFJet80(U)?(_NoJetID)?(_v[[:digit:]]+)?$",
+		"^HLT_PFJet140(U)?(_NoJetID)?(_v[[:digit:]]+)?$",
+		"^HLT_PFJet200(U)?(_NoJetID)?(_v[[:digit:]]+)?$",
+		"^HLT_PFJet260(U)?(_NoJetID)?(_v[[:digit:]]+)?$",
 	)
-	process.kappatuple.Metadata.hltBlacklist = cms.vstring()
+	process.kappatuple.Metadata.hltBlacklist = cms.vstring(
+		"^HLT_PFJet320(U)?(_NoJetID)?(_v[[:digit:]]+)?$",
+	)
 	process.pathSkim = cms.Path(process.kappatuple)
 	#-------------------------------------------------------------------------------
 	
