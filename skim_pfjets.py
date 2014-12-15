@@ -4,7 +4,7 @@ import FWCore.ParameterSet.Config as cms
 def get_process(datatype, globaltag):
 
 	if not datatype:
-		datatype = 'DATA'
+		datatype = 'MC'
 
 	is_data = datatype.lower() == 'data'
 	
@@ -53,7 +53,7 @@ def get_process(datatype, globaltag):
 		process.kappatuple.active.append('TriggerObjects')
 	else:
 		process.kappatuple.active.append('GenMetadata')
-		process.kappatuple.active.append('GenParticles')
+		# process.kappatuple.active.append('GenParticles')
 	
 	process.kappatuple.Metadata.hltWhitelist = cms.vstring(
 		"^HLT_PFJet[0-9]+(U)?(_NoJetID)?(_v[[:digit:]]+)?$",
