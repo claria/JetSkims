@@ -47,6 +47,7 @@ def get_process(datatype, globaltag):
         outputFile = cms.string('skim.root'),
     )
     process.kappatuple.PFJets.minPt = cms.double(25)
+    process.kappatuple.PFJets.whitelist = cms.vstring("recoPFJets_ak5PFJets.*", "recoPFJets_ak7PFJets.*")
     process.kappatuple.verbose = cms.int32(0)
     process.kappatuple.active = cms.vstring(
         'LV', 'TrackSummary', 'VertexSummary', 'PFMET', 'PFJets', 'JetArea',
