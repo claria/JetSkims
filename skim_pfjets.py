@@ -7,7 +7,7 @@ globaltag=None if '@' in '@GLOBALTAG@' else '@GLOBALTAG@'
 
 
 if datatype is None:
-    datatype = 'DATA'
+    datatype = 'MC'
 
 is_data = (datatype.lower() == 'data')
 
@@ -121,23 +121,25 @@ process.kappatuple = cms.EDAnalyzer('KTuple',
     process.kappaTupleDefaultsBlock,
     outputFile = cms.string('skim.root'),
 )
-process.kappatuple.PFJets.minPt = cms.double(20)
-process.kappatuple.PFJets.maxEta = cms.double(5.)
-process.kappatuple.PFJets.whitelist = cms.vstring("recoPFJets_ak5PFJets.*", "recoPFJets_ak7PFJets.*")
+process.kappatuple.BasicJets.minPt = cms.double(20)
+process.kappatuple.BasicJets.maxEta = cms.double(5.)
+process.kappatuple.BasicJets.whitelist = cms.vstring("recoPFJets_ak5PFJets.*", "recoPFJets_ak7PFJets.*")
+process.kappatuple.GenJets.whitelist = cms.vstring("recoGenJets_ak5GenJets.*", "recoGenJets_ak7GenJets.*")
 process.kappatuple.verbose = cms.int32(0)
 process.kappatuple.active = cms.vstring(
-    'LV', 'TrackSummary', 'VertexSummary', 'FilterSummary', 'PFMET', 'PFJets', 'JetArea', 'HCALNoiseSummary',
+    'TrackSummary', 'VertexSummary', 'FilterSummary', 'MET', 'BasicJets', 'PileupDensity', 'HCALNoiseSummary',
 )
 if is_data:
-    process.kappatuple.active.append('DataMetadata')
+    process.kappatuple.active.append('DataInfo')
     process.kappatuple.active.append('TriggerObjects')
 else:
-    process.kappatuple.active.append('GenMetadata')
+    process.kappatuple.active.append('GenInfo')
+    process.kappatuple.active.append('GenJets')
     # process.kappatuple.active.append('GenParticles')
-process.kappatuple.Metadata.hltWhitelist = cms.vstring(
+process.kappatuple.Info.hltWhitelist = cms.vstring(
     "^HLT_PFJet[0-9]+(U)?(_NoJetID)?(_v[[:digit:]]+)?$",
 )
-process.kappatuple.Metadata.hltBlacklist = cms.vstring()
+process.kappatuple.Info.hltBlacklist = cms.vstring()
 
 #-------------------------------------------------------------------------------
 # Output
