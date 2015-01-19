@@ -25,8 +25,11 @@ process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(filename)
 )
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
-print "GT: {0}".format(globaltag)
-print "TYPE: {0}".format(datatype)
+
+print "Starting Kappa Skim"
+
+print "GlobalTag: {0}".format(globaltag)
+print "Datatype: {0}".format(datatype)
 
 #-------------------------------------------------------------------------------
 # Global Tag
@@ -46,6 +49,7 @@ process.GlobalTag.globaltag = globaltag
 if is_data:
    process.source.lumisToProcess = LumiList.LumiList(filename = 'Cert_190456-208686_8TeV_22Jan2013ReReco_Collisions12_JSON.txt').getVLuminosityBlockRange()
 
+print "Using HLT Filter path"
 import HLTrigger.HLTfilters.hltHighLevel_cfi as hlt
 process.hlt_pfjets = hlt.hltHighLevel.clone(
     HLTPaths = ["HLT_PFJet*_v*"],
@@ -54,7 +58,7 @@ process.hlt_pfjets = hlt.hltHighLevel.clone(
 
 process.hlt_pfjetspath = cms.Path(process.hlt_pfjets)
 
-
+print "Using MET Filters"
 ## The iso-based HBHE noise filter ___________________________________________||
 process.load('CommonTools.RecoAlgos.HBHENoiseFilter_cfi')
 process.load('CommonTools.RecoAlgos.HBHENoiseFilterResultProducer_cfi')
@@ -134,7 +138,8 @@ if is_data:
     process.kappatuple.active.append('TriggerObjects')
 else:
     process.kappatuple.active.append('GenInfo')
-    process.kappatuple.active.append('GenJets')
+    process.kappatuple.active.append('LV')
+    process.kappatuple.LV.whitelist = cms.vstring("recoGenJets_ak5GenJets.*", "recoGenJets_ak7GenJets.*")
     # process.kappatuple.active.append('GenParticles')
 process.kappatuple.Info.hltWhitelist = cms.vstring(
     "^HLT_PFJet[0-9]+(U)?(_NoJetID)?(_v[[:digit:]]+)?$",
