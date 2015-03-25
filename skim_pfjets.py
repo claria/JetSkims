@@ -13,7 +13,8 @@ is_data = (datatype.lower() == 'data')
 
 if is_data:
     globaltag = globaltag if globaltag else 'FT53_V21A_AN6::All'
-    filename = 'root://xrootd.unl.edu//store/data/Run2012A/Jet/AOD/22Jan2013-v1/30000/F8B135C2-2072-E211-BA5A-00304867BEDE.root'
+    # filename = 'root://xrootd.unl.edu//store/data/Run2012A/Jet/AOD/22Jan2013-v1/30000/F8B135C2-2072-E211-BA5A-00304867BEDE.root'
+    filename = 'root://xrootd.unl.edu//store/data/Run2012A/Jet/AOD/22Jan2013-v1/20000/3E1876AD-7F72-E211-A2B7-003048678F8C.root'
 else:
     globaltag = globaltag if globaltag else 'START53_V27::All'
     filename = 'root://xrootd.unl.edu//store/mc/Summer12_DR53X/QCD_Pt-15to3000_TuneZ2star_Flat_8TeV_pythia6/AODSIM/PU_S10_START53_V7A-v1/0000/004CB136-A1D3-E111-B958-0030487E4B8D.root'
@@ -71,71 +72,73 @@ process.GlobalTag.globaltag = globaltag
 # MET Filter FilterResults
 #-------------------------------------------------------------------------------
 
-process.load('RecoMET.METFilters.ecalLaserCorrFilter_cfi')
-# Create good vertices for the trackingFailure MET filter
-process.goodVertices = cms.EDFilter("VertexSelector",
-    filter = cms.bool(False),
-    src = cms.InputTag("offlinePrimaryVertices"),
-    cut = cms.string("!isFake && ndof > 4 && abs(z) <= 24 && position.rho < 2"),
-)
-# The good primary vertex filter for other MET filters
-process.primaryVertexFilter = cms.EDFilter("VertexSelector",
-    filter = cms.bool(True),
-    src = cms.InputTag("offlinePrimaryVertices"),
-    cut = cms.string("!isFake && ndof > 4 && abs(z) <= 24 && position.Rho <= 2"),
-)
-process.noscraping = cms.EDFilter("FilterOutScraping",
-    applyfilter = cms.untracked.bool(True),
-    debugOn = cms.untracked.bool(False),
-    numtrack = cms.untracked.uint32(10),
-    thresh = cms.untracked.double(0.25)
-)
-process.load('CommonTools.RecoAlgos.HBHENoiseFilter_cfi')
-process.load('RecoMET.METFilters.CSCTightHaloFilter_cfi')
-process.load('RecoMET.METFilters.hcalLaserEventFilter_cfi')
-process.hcalLaserEventFilter.vetoByRunEventNumber = cms.untracked.bool(False)
-process.hcalLaserEventFilter.vetoByHBHEOccupancy = cms.untracked.bool(True)
-process.load('RecoMET.METFilters.EcalDeadCellTriggerPrimitiveFilter_cfi')
-process.EcalDeadCellTriggerPrimitiveFilter.tpDigiCollection = cms.InputTag("ecalTPSkimNA")
-process.load('RecoMET.METFilters.EcalDeadCellBoundaryEnergyFilter_cfi')
-process.load('RecoMET.METFilters.eeBadScFilter_cfi')
-process.load('RecoMET.METFilters.eeNoiseFilter_cfi')
-process.load('RecoMET.METFilters.ecalLaserCorrFilter_cfi')
-process.load('RecoMET.METFilters.trackingFailureFilter_cfi')
-process.load('RecoMET.METFilters.inconsistentMuonPFCandidateFilter_cfi')
-process.load('RecoMET.METFilters.greedyMuonPFCandidateFilter_cfi')
-
-process.hcalLaserEventFilter.taggingMode = cms.bool(True)
-process.EcalDeadCellTriggerPrimitiveFilter.taggingMode = cms.bool(True)
-process.EcalDeadCellBoundaryEnergyFilter.taggingMode = cms.bool(True)
-process.trackingFailureFilter.taggingMode = cms.bool(True)
-process.eeBadScFilter.taggingMode = cms.bool(True)
-process.eeNoiseFilter.taggingMode = cms.bool(True)
-process.ecalLaserCorrFilter.taggingMode = cms.bool(True)
-process.trackingFailureFilter.taggingMode = cms.bool(True)
-process.inconsistentMuonPFCandidateFilter.taggingMode = cms.bool(True)
-process.greedyMuonPFCandidateFilter.taggingMode = cms.bool(True)
-process.beamScrapingFilter = process.inconsistentMuonPFCandidateFilter.clone(
-    ptMin = cms.double(5000.0)
-)
-process.hcalNoiseFilter = process.beamScrapingFilter.clone()
-process.beamHaloFilter = process.beamScrapingFilter.clone()
-process.filtersSeq = cms.Sequence(
-    process.primaryVertexFilter *
-    process.hcalLaserEventFilter +
-    process.EcalDeadCellTriggerPrimitiveFilter +
-    process.EcalDeadCellBoundaryEnergyFilter +
-    process.eeBadScFilter +
-    process.eeNoiseFilter +
-    process.ecalLaserCorrFilter +
-    process.goodVertices * process.trackingFailureFilter +
-    process.inconsistentMuonPFCandidateFilter +
-    process.greedyMuonPFCandidateFilter +
-    process.noscraping * process.beamScrapingFilter +
-    process.HBHENoiseFilter * process.hcalNoiseFilter +
-    process.CSCTightHaloFilter * process.beamHaloFilter
-)
-process.metFilters = cms.Path(process.filtersSeq)
+# process.load('RecoMET.METFilters.ecalLaserCorrFilter_cfi')
+# # Create good vertices for the trackingFailure MET filter
+# process.goodVertices = cms.EDFilter("VertexSelector",
+#     filter = cms.bool(False),
+#     src = cms.InputTag("offlinePrimaryVertices"),
+#     cut = cms.string("!isFake && ndof > 4 && abs(z) <= 24 && position.rho < 2"),
+# )
+# # The good primary vertex filter for other MET filters
+# process.primaryVertexFilter = cms.EDFilter("VertexSelector",
+#     filter = cms.bool(True),
+#     src = cms.InputTag("offlinePrimaryVertices"),
+#     cut = cms.string("!isFake && ndof > 4 && abs(z) <= 24 && position.Rho <= 2"),
+# )
+# process.noscraping = cms.EDFilter("FilterOutScraping",
+#     applyfilter = cms.untracked.bool(True),
+#     debugOn = cms.untracked.bool(False),
+#     numtrack = cms.untracked.uint32(10),
+#     thresh = cms.untracked.double(0.25)
+# )
+# process.load('CommonTools.RecoAlgos.HBHENoiseFilter_cfi')
+# process.load('RecoMET.METFilters.CSCTightHaloFilter_cfi')
+# process.load('RecoMET.METFilters.hcalLaserEventFilter_cfi')
+# process.hcalLaserEventFilter.vetoByRunEventNumber = cms.untracked.bool(False)
+# process.hcalLaserEventFilter.vetoByHBHEOccupancy = cms.untracked.bool(True)
+# process.load('RecoMET.METFilters.EcalDeadCellTriggerPrimitiveFilter_cfi')
+# process.EcalDeadCellTriggerPrimitiveFilter.tpDigiCollection = cms.InputTag("ecalTPSkimNA")
+# process.load('RecoMET.METFilters.EcalDeadCellBoundaryEnergyFilter_cfi')
+# process.load('RecoMET.METFilters.eeBadScFilter_cfi')
+# process.load('RecoMET.METFilters.eeNoiseFilter_cfi')
+# process.load('RecoMET.METFilters.ecalLaserCorrFilter_cfi')
+# process.load('RecoMET.METFilters.trackingFailureFilter_cfi')
+# process.load('RecoMET.METFilters.inconsistentMuonPFCandidateFilter_cfi')
+# process.load('RecoMET.METFilters.greedyMuonPFCandidateFilter_cfi')
+#
+# process.hcalLaserEventFilter.taggingMode = cms.bool(True)
+# process.EcalDeadCellTriggerPrimitiveFilter.taggingMode = cms.bool(True)
+# process.EcalDeadCellBoundaryEnergyFilter.taggingMode = cms.bool(True)
+# process.eeBadScFilter.taggingMode = cms.bool(True)
+# process.eeNoiseFilter.taggingMode = cms.bool(True)
+# process.ecalLaserCorrFilter.taggingMode = cms.bool(True)
+# process.trackingFailureFilter.taggingMode = cms.bool(True)
+# process.inconsistentMuonPFCandidateFilter.taggingMode = cms.bool(True)
+# process.greedyMuonPFCandidateFilter.taggingMode = cms.bool(True)
+# process.beamScrapingFilter = process.inconsistentMuonPFCandidateFilter.clone(
+#     ptMin = cms.double(5000.0)
+# )
+# process.hcalNoiseFilter = process.beamScrapingFilter.clone()
+# process.beamHaloFilter = process.beamScrapingFilter.clone()
+# process.filtersSeq = cms.Sequence(
+#     process.primaryVertexFilter +
+#     process.hcalLaserEventFilter +
+#     process.EcalDeadCellTriggerPrimitiveFilter +
+#     process.EcalDeadCellBoundaryEnergyFilter +
+#     process.eeBadScFilter +
+#     process.eeNoiseFilter +
+#     process.ecalLaserCorrFilter +
+#     process.goodVertices + process.trackingFailureFilter +
+#     process.inconsistentMuonPFCandidateFilter +
+#     process.greedyMuonPFCandidateFilter +
+#     process.noscraping * process.beamScrapingFilter +
+#     ~process.noscraping * ~process.beamScrapingFilter +
+#     process.HBHENoiseFilter * process.hcalNoiseFilter +
+#     ~process.HBHENoiseFilter * ~process.hcalNoiseFilter +
+#     process.CSCTightHaloFilter * process.beamHaloFilter +
+#     ~process.CSCTightHaloFilter * ~process.beamHaloFilter
+# )
+# process.metFilters = cms.Path(process.filtersSeq)
 
 #-------------------------------------------------------------------------------
 # Kappa Tuple
@@ -185,6 +188,6 @@ process.kappa_path = cms.Path(process.kappatuple)
 # Process schedule
 #-------------------------------------------------------------------------------
 process.schedule = cms.Schedule(
-                                process.metFilters,
+                                # process.metFilters,
                                 process.kappa_path
                                 )
