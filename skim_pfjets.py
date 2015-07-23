@@ -7,7 +7,7 @@ globaltag=None if '@' in '@GLOBALTAG@' else '@GLOBALTAG@'
 
 
 if datatype is None:
-    datatype = 'DATA'
+    datatype = 'MC'
 
 is_data = (datatype.lower() == 'data')
 
@@ -139,6 +139,49 @@ process.GlobalTag.globaltag = globaltag
 #     ~process.CSCTightHaloFilter * ~process.beamHaloFilter
 # )
 # process.metFilters = cms.Path(process.filtersSeq)
+#-------------------------------------------------------------------------------
+# JEC
+#-------------------------------------------------------------------------------
+process.load("CondCore.DBCommon.CondDBCommon_cfi")
+process.load('JetMETCorrections.Configuration.DefaultJEC_cff')
+process.load('JetMETCorrections.Configuration.JetCorrectionProducers_cff')
+process.load('JetMETCorrections.Configuration.JetCorrectionProducersAllAlgos_cff')
+
+if is_data:
+    if is_data:
+        jec_string = 'DATA'
+    else:
+        jec_string = 'MC'
+    process.jecsource = cms.ESSource("PoolDBESSource",
+          DBParameters = cms.PSet(
+            messageLevel = cms.untracked.int32(0)
+            ),
+          timetype = cms.string('runnumber'),
+          toGet = cms.VPSet(
+          cms.PSet(
+                record = cms.string('JetCorrectionsRecord'),
+                tag    = cms.string('JetCorrectorParametersCollection_Winter14_V5_{0}_AK5PF'.format(jec_string)),
+                # tag    = cms.string('JetCorrectorParametersCollection_Summer12_V3_MC_AK5PF'),
+                label  = cms.untracked.string('AK5PF')
+                ),
+          cms.PSet(
+                record = cms.string('JetCorrectionsRecord'),
+                tag    = cms.string('JetCorrectorParametersCollection_Winter14_V5_{0}_AK7PF'.format(jec_string)),
+                # tag    = cms.string('JetCorrectorParametersCollection_Summer12_V3_MC_AK7PF'),
+                label  = cms.untracked.string('AK7PF')
+                ),
+          ), 
+          connect = cms.string('sqlite:Winter14_V5_{0}.db'.format(jec_string))
+    )
+    # add an es_prefer statement to resolve a possible conflict from simultaneous connection to a global tag
+    process.es_prefer_jec = cms.ESPrefer('PoolDBESSource','jecsource')
+else:
+    # In this case the JEC from the GT (START_XYZ) should be used
+    pass
+if is_data:
+    process.jec = cms.Path(process.ak5PFJetsL1FastL2L3Residual + process.ak7PFJetsL1FastL2L3Residual)
+else:
+    process.jec = cms.Path(process.ak5PFJetsL1FastL2L3 + process.ak7PFJetsL1FastL2L3)
 
 #-------------------------------------------------------------------------------
 # Kappa Tuple
@@ -189,5 +232,6 @@ process.kappa_path = cms.Path(process.kappatuple)
 #-------------------------------------------------------------------------------
 process.schedule = cms.Schedule(
                                 # process.metFilters,
+                                process.jec,
                                 process.kappa_path
                                 )
