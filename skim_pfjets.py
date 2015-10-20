@@ -7,14 +7,15 @@ globaltag=None if '@' in '@GLOBALTAG@' else '@GLOBALTAG@'
 
 
 if datatype is None:
-    datatype = 'MC'
+    datatype = 'DATA'
 
 is_data = (datatype.lower() == 'data')
 
 if is_data:
     globaltag = globaltag if globaltag else 'FT53_V21A_AN6::All'
     # filename = 'root://xrootd.unl.edu//store/data/Run2012A/Jet/AOD/22Jan2013-v1/30000/F8B135C2-2072-E211-BA5A-00304867BEDE.root'
-    filename = 'root://xrootd.unl.edu//store/data/Run2012A/Jet/AOD/22Jan2013-v1/20000/3E1876AD-7F72-E211-A2B7-003048678F8C.root'
+    # filename = 'root://xrootd.unl.edu//store/data/Run2012A/Jet/AOD/22Jan2013-v1/20000/3E1876AD-7F72-E211-A2B7-003048678F8C.root'
+    filename = ["/store/data/Run2012D/JetHT/AOD/22Jan2013-v1/10002/04FAA943-9D97-E211-830B-E0CB4E1A11A2.root", "/store/data/Run2012D/JetHT/AOD/22Jan2013-v1/10002/D47C39F3-A197-E211-94A5-E0CB4E1A118B.root"]
 else:
     globaltag = globaltag if globaltag else 'START53_V27::All'
     filename = 'root://xrootd.unl.edu//store/mc/Summer12_DR53X/QCD_Pt-15to3000_TuneZ2star_Flat_8TeV_pythia6/AODSIM/PU_S10_START53_V7A-v1/0000/004CB136-A1D3-E111-B958-0030487E4B8D.root'
@@ -209,6 +210,8 @@ else:
     # process.kappatuple.active.append('GenParticles')
 process.kappatuple.Info.hltWhitelist = cms.vstring(
     "^HLT_PFJet[0-9]+(U)?(_NoJetID)?(_v[[:digit:]]+)?$",
+    "^HLT_DiPFJetAve[0-9]+(U)?(_NoJetID)?(_v[[:digit:]]+)?$",
+    "^HLT_ZeroBias?(_v[[:digit:]]+)?$",
 )
 process.kappatuple.Info.hltBlacklist = cms.vstring()
 
