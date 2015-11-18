@@ -183,6 +183,11 @@ if is_data:
     process.jec = cms.Path(process.ak5PFJetsL1FastL2L3Residual + process.ak7PFJetsL1FastL2L3Residual)
 else:
     process.jec = cms.Path(process.ak5PFJetsL1FastL2L3 + process.ak7PFJetsL1FastL2L3)
+#-------------------------------------------------------------------------------
+# MET Filters
+#-------------------------------------------------------------------------------
+
+process.load("RecoMET.METFilters.metFilters_cff")
 
 #-------------------------------------------------------------------------------
 # Kappa Tuple
@@ -215,7 +220,7 @@ process.kappatuple.Info.hltWhitelist = cms.vstring(
 )
 process.kappatuple.Info.hltBlacklist = cms.vstring()
 
-process.kappa_path = cms.Path(process.kappatuple)
+process.kappa_path = cms.Path(process.metFilters + process.kappatuple)
 
 #-------------------------------------------------------------------------------
 # Output
@@ -234,7 +239,6 @@ process.kappa_path = cms.Path(process.kappatuple)
 # Process schedule
 #-------------------------------------------------------------------------------
 process.schedule = cms.Schedule(
-                                # process.metFilters,
                                 process.jec,
                                 process.kappa_path
                                 )
