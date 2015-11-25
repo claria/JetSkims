@@ -45,6 +45,10 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 process.load("Configuration.StandardSequences.Reconstruction_cff")
 process.GlobalTag.globaltag = globaltag
 
+
+process.path = cms.Path()
+
+
 #-------------------------------------------------------------------------------
 # Filters
 #-------------------------------------------------------------------------------
@@ -58,147 +62,67 @@ process.GlobalTag.globaltag = globaltag
 #    process.source.lumisToProcess = LumiList.LumiList(filename = 'Cert_190456-208686_8TeV_22Jan2013ReReco_Collisions12_JSON.txt').getVLuminosityBlockRange()
 
 #-------------------------------------------------------------------------------
-# HLT Filter
-#-------------------------------------------------------------------------------
-
-#import HLTrigger.HLTfilters.hltHighLevel_cfi as hlt
-#process.hlt_pfjets = hlt.hltHighLevel.clone(
-#    HLTPaths = ["HLT_PFJet*_v*"],
-#    throw = False
-#    )
-#
-#process.hlt_pfjetspath = cms.Path(process.hlt_pfjets)
-
-#-------------------------------------------------------------------------------
-# MET Filter FilterResults
-#-------------------------------------------------------------------------------
-
-# process.load('RecoMET.METFilters.ecalLaserCorrFilter_cfi')
-# # Create good vertices for the trackingFailure MET filter
-# process.goodVertices = cms.EDFilter("VertexSelector",
-#     filter = cms.bool(False),
-#     src = cms.InputTag("offlinePrimaryVertices"),
-#     cut = cms.string("!isFake && ndof > 4 && abs(z) <= 24 && position.rho < 2"),
-# )
-# # The good primary vertex filter for other MET filters
-# process.primaryVertexFilter = cms.EDFilter("VertexSelector",
-#     filter = cms.bool(True),
-#     src = cms.InputTag("offlinePrimaryVertices"),
-#     cut = cms.string("!isFake && ndof > 4 && abs(z) <= 24 && position.Rho <= 2"),
-# )
-# process.noscraping = cms.EDFilter("FilterOutScraping",
-#     applyfilter = cms.untracked.bool(True),
-#     debugOn = cms.untracked.bool(False),
-#     numtrack = cms.untracked.uint32(10),
-#     thresh = cms.untracked.double(0.25)
-# )
-# process.load('CommonTools.RecoAlgos.HBHENoiseFilter_cfi')
-# process.load('RecoMET.METFilters.CSCTightHaloFilter_cfi')
-# process.load('RecoMET.METFilters.hcalLaserEventFilter_cfi')
-# process.hcalLaserEventFilter.vetoByRunEventNumber = cms.untracked.bool(False)
-# process.hcalLaserEventFilter.vetoByHBHEOccupancy = cms.untracked.bool(True)
-# process.load('RecoMET.METFilters.EcalDeadCellTriggerPrimitiveFilter_cfi')
-# process.EcalDeadCellTriggerPrimitiveFilter.tpDigiCollection = cms.InputTag("ecalTPSkimNA")
-# process.load('RecoMET.METFilters.EcalDeadCellBoundaryEnergyFilter_cfi')
-# process.load('RecoMET.METFilters.eeBadScFilter_cfi')
-# process.load('RecoMET.METFilters.eeNoiseFilter_cfi')
-# process.load('RecoMET.METFilters.ecalLaserCorrFilter_cfi')
-# process.load('RecoMET.METFilters.trackingFailureFilter_cfi')
-# process.load('RecoMET.METFilters.inconsistentMuonPFCandidateFilter_cfi')
-# process.load('RecoMET.METFilters.greedyMuonPFCandidateFilter_cfi')
-#
-# process.hcalLaserEventFilter.taggingMode = cms.bool(True)
-# process.EcalDeadCellTriggerPrimitiveFilter.taggingMode = cms.bool(True)
-# process.EcalDeadCellBoundaryEnergyFilter.taggingMode = cms.bool(True)
-# process.eeBadScFilter.taggingMode = cms.bool(True)
-# process.eeNoiseFilter.taggingMode = cms.bool(True)
-# process.ecalLaserCorrFilter.taggingMode = cms.bool(True)
-# process.trackingFailureFilter.taggingMode = cms.bool(True)
-# process.inconsistentMuonPFCandidateFilter.taggingMode = cms.bool(True)
-# process.greedyMuonPFCandidateFilter.taggingMode = cms.bool(True)
-# process.beamScrapingFilter = process.inconsistentMuonPFCandidateFilter.clone(
-#     ptMin = cms.double(5000.0)
-# )
-# process.hcalNoiseFilter = process.beamScrapingFilter.clone()
-# process.beamHaloFilter = process.beamScrapingFilter.clone()
-# process.filtersSeq = cms.Sequence(
-#     process.primaryVertexFilter +
-#     process.hcalLaserEventFilter +
-#     process.EcalDeadCellTriggerPrimitiveFilter +
-#     process.EcalDeadCellBoundaryEnergyFilter +
-#     process.eeBadScFilter +
-#     process.eeNoiseFilter +
-#     process.ecalLaserCorrFilter +
-#     process.goodVertices + process.trackingFailureFilter +
-#     process.inconsistentMuonPFCandidateFilter +
-#     process.greedyMuonPFCandidateFilter +
-#     process.noscraping * process.beamScrapingFilter +
-#     ~process.noscraping * ~process.beamScrapingFilter +
-#     process.HBHENoiseFilter * process.hcalNoiseFilter +
-#     ~process.HBHENoiseFilter * ~process.hcalNoiseFilter +
-#     process.CSCTightHaloFilter * process.beamHaloFilter +
-#     ~process.CSCTightHaloFilter * ~process.beamHaloFilter
-# )
-# process.metFilters = cms.Path(process.filtersSeq)
-#-------------------------------------------------------------------------------
 # JEC
 #-------------------------------------------------------------------------------
-process.load("CondCore.DBCommon.CondDBCommon_cfi")
-process.load('JetMETCorrections.Configuration.DefaultJEC_cff')
-process.load('JetMETCorrections.Configuration.JetCorrectionProducers_cff')
-process.load('JetMETCorrections.Configuration.JetCorrectionProducersAllAlgos_cff')
-
-if is_data:
-    if is_data:
-        jec_string = 'DATA'
-    else:
-        jec_string = 'MC'
-    process.jecsource = cms.ESSource("PoolDBESSource",
-          DBParameters = cms.PSet(
-            messageLevel = cms.untracked.int32(0)
-            ),
-          timetype = cms.string('runnumber'),
-          toGet = cms.VPSet(
-          cms.PSet(
-                record = cms.string('JetCorrectionsRecord'),
-                tag    = cms.string('JetCorrectorParametersCollection_Winter14_V5_{0}_AK5PF'.format(jec_string)),
-                # tag    = cms.string('JetCorrectorParametersCollection_Summer12_V3_MC_AK5PF'),
-                label  = cms.untracked.string('AK5PF')
-                ),
-          cms.PSet(
-                record = cms.string('JetCorrectionsRecord'),
-                tag    = cms.string('JetCorrectorParametersCollection_Winter14_V5_{0}_AK7PF'.format(jec_string)),
-                # tag    = cms.string('JetCorrectorParametersCollection_Summer12_V3_MC_AK7PF'),
-                label  = cms.untracked.string('AK7PF')
-                ),
-          ), 
-          connect = cms.string('sqlite:Winter14_V5_{0}.db'.format(jec_string))
-    )
-    # add an es_prefer statement to resolve a possible conflict from simultaneous connection to a global tag
-    process.es_prefer_jec = cms.ESPrefer('PoolDBESSource','jecsource')
-else:
-    # In this case the JEC from the GT (START_XYZ) should be used
-    pass
-if is_data:
-    process.jec = cms.Path(process.ak5PFJetsL1FastL2L3Residual + process.ak7PFJetsL1FastL2L3Residual)
-else:
-    process.jec = cms.Path(process.ak5PFJetsL1FastL2L3 + process.ak7PFJetsL1FastL2L3)
+# process.load("CondCore.DBCommon.CondDBCommon_cfi")
+# process.load('JetMETCorrections.Configuration.DefaultJEC_cff')
+# process.load('JetMETCorrections.Configuration.JetCorrectionProducers_cff')
+# process.load('JetMETCorrections.Configuration.JetCorrectionProducersAllAlgos_cff')
+#
+# if is_data:
+#     if is_data:
+#         jec_string = 'DATA'
+#     else:
+#         jec_string = 'MC'
+#     process.jecsource = cms.ESSource("PoolDBESSource",
+#           DBParameters = cms.PSet(
+#             messageLevel = cms.untracked.int32(0)
+#             ),
+#           timetype = cms.string('runnumber'),
+#           toGet = cms.VPSet(
+#           cms.PSet(
+#                 record = cms.string('JetCorrectionsRecord'),
+#                 tag    = cms.string('JetCorrectorParametersCollection_Winter14_V5_{0}_AK5PF'.format(jec_string)),
+#                 # tag    = cms.string('JetCorrectorParametersCollection_Summer12_V3_MC_AK5PF'),
+#                 label  = cms.untracked.string('AK5PF')
+#                 ),
+#           cms.PSet(
+#                 record = cms.string('JetCorrectionsRecord'),
+#                 tag    = cms.string('JetCorrectorParametersCollection_Winter14_V5_{0}_AK7PF'.format(jec_string)),
+#                 # tag    = cms.string('JetCorrectorParametersCollection_Summer12_V3_MC_AK7PF'),
+#                 label  = cms.untracked.string('AK7PF')
+#                 ),
+#           ), 
+#           connect = cms.string('sqlite:Winter14_V5_{0}.db'.format(jec_string))
+#     )
+#     # add an es_prefer statement to resolve a possible conflict from simultaneous connection to a global tag
+#     process.es_prefer_jec = cms.ESPrefer('PoolDBESSource','jecsource')
+# else:
+#     # In this case the JEC from the GT (START_XYZ) should be used
+#     pass
+# if is_data:
+#     process.jec = cms.Path(process.ak5PFJetsL1FastL2L3Residual + process.ak7PFJetsL1FastL2L3Residual)
+# else:
+#     process.jec = cms.Path(process.ak5PFJetsL1FastL2L3 + process.ak7PFJetsL1FastL2L3)
 #-------------------------------------------------------------------------------
 # MET Filters
 #-------------------------------------------------------------------------------
 
 process.load("RecoMET.METFilters.metFilters_cff")
 
+
+process.path *= process.metFilters
+
 #-------------------------------------------------------------------------------
 # Kappa Tuple
 #-------------------------------------------------------------------------------
 process.load("Kappa.Producers.KTuple_cff")
+
+
 process.kappatuple = cms.EDAnalyzer('KTuple',
     process.kappaTupleDefaultsBlock,
     outputFile = cms.string('skim.root'),
 )
-process.kappatuple.BasicJets.minPt = cms.double(20)
-process.kappatuple.BasicJets.maxEta = cms.double(5.)
 process.kappatuple.BasicJets.whitelist = cms.vstring("recoPFJets_ak5PFJets.*", "recoPFJets_ak7PFJets.*")
 # process.kappatuple.GenJets.whitelist = cms.vstring("recoGenJets_ak5GenJets.*", "recoGenJets_ak7GenJets.*")
 process.kappatuple.verbose = cms.int32(0)
@@ -220,7 +144,51 @@ process.kappatuple.Info.hltWhitelist = cms.vstring(
 )
 process.kappatuple.Info.hltBlacklist = cms.vstring()
 
-process.kappa_path = cms.Path(process.metFilters + process.kappatuple)
+#--------------------------------------------------------------
+# PFCandidates
+#--------------------------------------------------------------
+
+process.load('Kappa.Skimming.KPFCandidates_cff')
+process.path *= (
+    process.goodOfflinePrimaryVertices
+    * process.pfPileUp
+    * process.pfNoPileUp
+)
+
+#--------------------------------------------------------------
+# Jets
+#--------------------------------------------------------------
+
+process.load('RecoJets.JetProducers.ak5PFJets_cfi')
+
+process.ak5PFJets.srcPVs = cms.InputTag('goodOfflinePrimaryVertices')
+process.ak5PFJetsCHS = process.ak5PFJets.clone( src = cms.InputTag('pfNoPileUp') )
+process.ak7PFJets = process.ak5PFJets.clone()
+process.ak7PFJets.rParam = cms.double(0.7)
+process.ak7PFJetsCHS = process.ak7PFJets.clone( src = cms.InputTag('pfNoPileUp') )
+
+
+process.kappatuple.BasicJets = cms.PSet(
+	process.kappaNoCut,
+	process.kappaNoRegEx,
+	ak5PFJets = cms.PSet(
+		src = cms.InputTag('ak5PFJets'),
+		),
+	ak5PFJetsCHS = cms.PSet(
+		src = cms.InputTag('ak5PFJetsCHS'),
+		),
+	ak7PFJets = cms.PSet(
+		src = cms.InputTag('ak7PFJets'),
+		),
+	ak7PFJetsCHS = cms.PSet(
+		src = cms.InputTag('ak7PFJetsCHS'),
+		),
+	)
+process.kappatuple.BasicJets.minPt = cms.double(20)
+process.kappatuple.BasicJets.maxEta = cms.double(5.)
+
+process.path *= (process.ak5PFJets * process.ak5PFJetsCHS * process.ak7PFJets * process.ak7PFJetsCHS)
+
 
 #-------------------------------------------------------------------------------
 # Output
@@ -238,7 +206,4 @@ process.kappa_path = cms.Path(process.metFilters + process.kappatuple)
 #-------------------------------------------------------------------------------
 # Process schedule
 #-------------------------------------------------------------------------------
-process.schedule = cms.Schedule(
-                                process.jec,
-                                process.kappa_path
-                                )
+process.path *= process.kappatuple
