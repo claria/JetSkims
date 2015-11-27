@@ -1,22 +1,24 @@
 import FWCore.ParameterSet.Config as cms
 from  FWCore.PythonUtilities import LumiList
 
+from FWCore.ParameterSet.VarParsing import VarParsing
+options = VarParsing('python')
+options.register('outputfilename', 'skim.root', VarParsing.multiplicity.singleton, VarParsing.varType.string, 'Filename for the Outputfile')
+options.register('globaltag', '', VarParsing.multiplicity.singleton, VarParsing.varType.string, 'GlobalTag')
+options.register('data', False, VarParsing.multiplicity.singleton, VarParsing.varType.bool, 'Is the dataset real data. Default: False')
+options.parseArguments()
 
-datatype=None if '@' in '@DATATYPE@' else '@DATATYPE@'
-globaltag=None if '@' in '@GLOBALTAG@' else '@GLOBALTAG@'
+is_data = options.data
+globaltag = options.globaltag
+filename = []
 
-
-if datatype is None:
-    datatype = 'DATA'
-
-is_data = (datatype.lower() == 'data')
-
-if is_data:
-    globaltag = globaltag if globaltag else 'GR_R_74_V12'
-    filename = ['/store/data/Run2015D/JetHT/AOD/PromptReco-v4/000/258/159/00000/621D56A1-D16B-E511-9F01-02163E01444E.root']
-else:
-    globaltag = globaltag if globaltag else 'MCRUN2_74_V8'
-    filename = ['']
+if options.globaltag == '':
+    if is_data:
+        globaltag = globaltag if globaltag else 'GR_R_74_V8'
+        filename = 'root://xrootd.unl.edu//store/mc/RunIISpring15DR74/QCD_Pt-15to7000_TuneCUETP8M1_Flat_13TeV_pythia8/AODSIM/Asympt25nsRaw_MCRUN2_74_V9-v3/00000/62FC22C5-6F12-E511-A1CF-C4346BC8F6D0.root'
+    else:
+        globaltag = globaltag if globaltag else 'MCRUN2_74_V8'
+        filename = '/store/mc/RunIISpring15DR74/QCD_Pt-15to7000_TuneCUETP8M1_Flat_13TeV_pythia8/AODSIM/Asympt25nsRaw_MCRUN2_74_V9-v3/00000/B6C8D7F2-6708-E511-906B-02163E01399C.root'
 
 
 # Basic process setup ----------------------------------------------------------
@@ -24,42 +26,50 @@ process = cms.Process("SKIM")
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(filename)
 )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
+process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(100))
 
 print "Starting Kappa Skim"
 
 print "GlobalTag: {0}".format(globaltag)
-print "Datatype: {0}".format(datatype)
+print "Datatype is data: {0}".format(is_data)
 
 #-------------------------------------------------------------------------------
 # Global Tag
 #-------------------------------------------------------------------------------
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.load('Configuration.StandardSequences.MagneticField_38T_cff')
-process.load('Configuration.Geometry.GeometryRecoDB_cff')
+process.load('Configuration.StandardSequences.Services_cff')
+process.load("Configuration.Geometry.GeometryRecoDB_cff")
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
+process.load("Configuration.StandardSequences.MagneticField_cff")
 process.GlobalTag.globaltag = globaltag
 
-
 process.path = cms.Path()
+
 
 #-------------------------------------------------------------------------------
 # Kappa Tuple
 #-------------------------------------------------------------------------------
 process.load("Kappa.Producers.KTuple_cff")
 
+
 process.kappatuple = cms.EDAnalyzer('KTuple',
     process.kappaTupleDefaultsBlock,
-    outputFile = cms.string('skim.root'),
+    outputFile = cms.string(options.outputfilename),
 )
+process.kappatuple.BasicJets.whitelist = cms.vstring("recoPFJets_ak5PFJets.*", "recoPFJets_ak7PFJets.*")
+# process.kappatuple.GenJets.whitelist = cms.vstring("recoGenJets_ak5GenJets.*", "recoGenJets_ak7GenJets.*")
 process.kappatuple.verbose = cms.int32(0)
 process.kappatuple.active = cms.vstring(
-    'TrackSummary', 'VertexSummary', 'FilterSummary', 'MET', 'BasicJets'
+    'TrackSummary', 'VertexSummary', 'FilterSummary', 'MET', 'BasicJets', 'PileupDensity'
 )
 if is_data:
     process.kappatuple.active.append('DataInfo')
     process.kappatuple.active.append('TriggerObjects')
 else:
+    # process.kappatuple.Info.l1Source = cms.InputTag("")
+    # process.kappatuple.Info.hltSource = cms.InputTag("")
+    # process.kappatuple.Info.hlTrigger = cms.InputTag("")
+
     process.kappatuple.active.append('GenInfo')
     process.kappatuple.active.append('LV')
     process.kappatuple.LV.whitelist = cms.vstring("recoGenJets_ak5GenJets.*", "recoGenJets_ak7GenJets.*")
@@ -71,11 +81,8 @@ process.kappatuple.Info.hltWhitelist = cms.vstring(
 )
 process.kappatuple.Info.hltBlacklist = cms.vstring()
 
-#--------------------------------------------------------------
-# PFCandidates
-#--------------------------------------------------------------
+
 # Primary Input Collections ###################################################
-## miniAOD has NOT been tested, I'm just guessing names - MF@20150907
 input_PFCandidates = 'particleFlow'
 input_PFCandidatePtrs = 'particleFlowPtrs'
 input_PrimaryVertices = 'goodOfflinePrimaryVertices'
@@ -83,10 +90,10 @@ input_PrimaryVertices = 'goodOfflinePrimaryVertices'
 
 #  PFCandidates  ###################################################
 ## Good offline PV selection: 
-from PhysicsTools.SelectorUtils.pvSelector_cfi import pvSelector
-process.goodOfflinePrimaryVertices = cms.EDFilter('PrimaryVertexObjectFilter',
-    filterParams = pvSelector.clone(maxZ = 24.0),  # ndof >= 4, rho <= 2
-)
+# from PhysicsTools.SelectorUtils.pvSelector_cfi import pvSelector
+# process.goodOfflinePrimaryVertices = cms.EDFilter('PrimaryVertexObjectFilter',
+#     filterParams = pvSelector.clone(maxZ = 24.0),  # ndof >= 4, rho <= 2
+# )
 
 ## ------------------------------------------------------------------------
 ## TopProjections from CommonTools/ParticleFlow:
@@ -117,18 +124,11 @@ process.pfPileUp.PFCandidates = cms.InputTag(input_PFCandidatePtrs)
 process.pfPileUpIso.PFCandidates = cms.InputTag(input_PFCandidatePtrs)
 process.pfNoPileUp.bottomCollection = cms.InputTag(input_PFCandidatePtrs)
 process.pfNoPileUpIso.bottomCollection = cms.InputTag(input_PFCandidatePtrs)
-process.path *= (
-    process.goodOfflinePrimaryVertices
-    * process.pfParticleSelectionSequence
-)
-#--------------------------------------------------------------
-# Jets
-#--------------------------------------------------------------
+process.path *= (process.goodOfflinePrimaryVertices * process.pfParticleSelectionSequence)
 
 #  Jets  ###########################################################
 # Kappa jet processing
 process.kappatuple.BasicJets.minPt = 5.0
-process.kappatuple.BasicJets.taggers = cms.vstring()
 
 # containers for objects to process
 jet_resources = []
@@ -140,7 +140,6 @@ if not is_data:
     process.load('RecoJets.Configuration.GenJetParticles_cff')
     process.load('RecoJets.JetProducers.ak5GenJets_cfi')
     jet_resources.append(process.genParticlesForJetsNoNu)
-    process.kappatuple.active += cms.vstring('LV')
     process.kappatuple.LV.whitelist = cms.vstring('ak5GenJetsNoNu') #default?
     genbase_jet = process.ak5GenJets.clone(src=cms.InputTag("genParticlesForJetsNoNu"), doAreaFastjet=True)
 
@@ -149,7 +148,7 @@ process.load("RecoJets.JetProducers.ak5PFJets_cfi")
 pfbase_jet = process.ak5PFJets.clone(srcPVs = 'goodOfflinePrimaryVertices', doAreaFastjet=True)
 
 # create Jet variants
-for param in (4, 5, 7, 8):
+for param in (4, 5, 8):
     # PFJets
     algos_and_tags = [("", input_PFCandidates), ("CHS", 'pfNoPileUp')]
     for algo, input_tag in algos_and_tags:
@@ -177,40 +176,12 @@ for name, jet_module in cmssw_jets.iteritems():
     setattr(process, name, jet_module)
 for name, pset in kappa_jets.iteritems():
     setattr(process.kappatuple.BasicJets, name, pset)
+
+
 process.path *= reduce(lambda a, b: a * b, jet_resources + sorted(cmssw_jets.values()))
-
-
-#-------------------------------------------------------------------------------
-# Pileup Density
-#-------------------------------------------------------------------------------
-from RecoJets.JetProducers.kt4PFJets_cfi import kt4PFJets
-process.pileupDensitykt6PFJets = kt4PFJets.clone(rParam=0.6, doRhoFastjet=True, Rho_EtaMax=2.5)
-
-process.kappatuple.active += cms.vstring('Jets', 'PileupDensity')
-process.kappatuple.PileupDensity.rename = cms.vstring("fixedGridRhoFastjetAll => pileupDensity")
-
-process.path *= (
-    process.pileupDensitykt6PFJets
-)
-
-#-------------------------------------------------------------------------------
-# Output
-#-------------------------------------------------------------------------------
-# process.out = cms.OutputModule('PoolOutputModule',
-#    fileName = cms.untracked.string('file:test_aod.root')
-#    )
-# process.pathOutput = cms.EndPath(process.out)
-
-# process.MessageLogger = cms.Service("MessageLogger",
-       # destinations = cms.untracked.vstring('debug'),
-      # debug   = cms.untracked.PSet(threshold=cms.untracked.string('DEBUG') ),
-# )
-
 #-------------------------------------------------------------------------------
 # Process schedule
 #-------------------------------------------------------------------------------
-
-
 process.path *= process.kappatuple
 
 # final information:
@@ -222,5 +193,3 @@ print "Kappa producers:"
 for p in sorted(process.kappatuple.active):
     print "  %s" % p
 print "---------------------------------"
-
-
