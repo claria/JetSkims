@@ -75,8 +75,6 @@ def submission():
 
     # loop over datasets and get repsective nicks
     for nickname in datasets.keys():
-        if not 'QCDMGP6' in nickname:
-            continue
         print nickname
         print datasets[nickname]['globaltag']
         print datasets[nickname]['dataset']
