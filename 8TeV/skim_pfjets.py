@@ -135,7 +135,7 @@ else:
     process.kappatuple.active.append('GenInfo')
     process.kappatuple.active.append('LV')
     process.kappatuple.LV.whitelist = cms.vstring("recoGenJets_ak5GenJets.*", "recoGenJets_ak7GenJets.*")
-    # process.kappatuple.active.append('GenParticles')
+    process.kappatuple.active.append('GenParticles')
 process.kappatuple.Info.hltWhitelist = cms.vstring(
     "^HLT_PFJet[0-9]+(U)?(_NoJetID)?(_v[[:digit:]]+)?$",
     "^HLT_DiPFJetAve[0-9]+(U)?(_NoJetID)?(_v[[:digit:]]+)?$",
