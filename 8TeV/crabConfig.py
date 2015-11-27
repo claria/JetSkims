@@ -47,7 +47,7 @@ def submission():
     from CRABClient.UserUtilities import config
     config = config()
 
-    config.General.workArea = '/nfs/dust/cms/user/gsieber/crab_kappa_skim-2015-11-27'
+    config.General.workArea = '/nfs/dust/cms/user/gsieber/crab_kappa_skim-2015-11-28'
     check_path(config.General.workArea)
     config.General.transferOutputs = True
     config.General.transferLogs = True
@@ -61,7 +61,7 @@ def submission():
     config.Data.inputDBS = 'global'
     config.Data.splitting = 'FileBased'
     config.Data.unitsPerJob = 10
-    config.Data.outLFNDirBase = '/store/user/sieber/SKIMS_JETS_2015/2015-11-27'
+    config.Data.outLFNDirBase = '/store/user/sieber/SKIMS_JETS_2015/2015-11-28'
     config.Data.publication = False
 
     config.Site.storageSite = "T2_DE_DESY"
@@ -75,11 +75,16 @@ def submission():
 
     # loop over datasets and get repsective nicks
     for nickname in datasets.keys():
+        if not 'QCDMGP6' in nickname:
+            continue
         print nickname
         print datasets[nickname]['globaltag']
         print datasets[nickname]['dataset']
         config.General.requestName = nickname
-        config.JobType.pyCfgParams = [str('globalTag=%s'%(datasets[nickname]['globaltag'])), str('outputfilename=kappa_%s.root'%(nickname)),'testsuite=False']
+        config.JobType.pyCfgParams = [str('globaltag=%s'%(datasets[nickname]['globaltag'])), 
+                                      str('outputfilename=kappa_%s.root'%(nickname)),
+                                      str('data={0}'.format(datasets[nickname]['is_data']))
+                                      ]
         print config.JobType.pyCfgParams
         config.JobType.outputFiles = [str('kappa_%s.root'%(nickname))]
         config.Data.inputDataset = datasets[nickname]['dataset']

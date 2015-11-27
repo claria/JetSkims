@@ -1,24 +1,24 @@
 import FWCore.ParameterSet.Config as cms
 from  FWCore.PythonUtilities import LumiList
 
+from FWCore.ParameterSet.VarParsing import VarParsing
+options = VarParsing('python')
+options.register('outputfilename', 'skim.root', VarParsing.multiplicity.singleton, VarParsing.varType.string, 'Filename for the Outputfile')
+options.register('globaltag', '', VarParsing.multiplicity.singleton, VarParsing.varType.string, 'GlobalTag')
+options.register('data', False, VarParsing.multiplicity.singleton, VarParsing.varType.bool, 'Is the dataset real data. Default: False')
+options.parseArguments()
 
-datatype=None if '@' in '@DATATYPE@' else '@DATATYPE@'
-globaltag=None if '@' in '@GLOBALTAG@' else '@GLOBALTAG@'
+is_data = options.data
+globaltag = options.globaltag
+filename = []
 
-
-if datatype is None:
-    datatype = 'DATA'
-
-is_data = (datatype.lower() == 'data')
-
-if is_data:
-    globaltag = globaltag if globaltag else 'FT53_V21A_AN6::All'
-    # filename = 'root://xrootd.unl.edu//store/data/Run2012A/Jet/AOD/22Jan2013-v1/30000/F8B135C2-2072-E211-BA5A-00304867BEDE.root'
-    # filename = 'root://xrootd.unl.edu//store/data/Run2012A/Jet/AOD/22Jan2013-v1/20000/3E1876AD-7F72-E211-A2B7-003048678F8C.root'
-    filename = ["/store/data/Run2012D/JetHT/AOD/22Jan2013-v1/10002/04FAA943-9D97-E211-830B-E0CB4E1A11A2.root", "/store/data/Run2012D/JetHT/AOD/22Jan2013-v1/10002/D47C39F3-A197-E211-94A5-E0CB4E1A118B.root"]
-else:
-    globaltag = globaltag if globaltag else 'START53_V27::All'
-    filename = 'root://xrootd.unl.edu//store/mc/Summer12_DR53X/QCD_Pt-15to3000_TuneZ2star_Flat_8TeV_pythia6/AODSIM/PU_S10_START53_V7A-v1/0000/004CB136-A1D3-E111-B958-0030487E4B8D.root'
+if options.globaltag == '':
+    if is_data:
+        globaltag = globaltag if globaltag else 'FT53_V21A_AN6::All'
+        filename = ["/store/data/Run2012D/JetHT/AOD/22Jan2013-v1/10002/04FAA943-9D97-E211-830B-E0CB4E1A11A2.root", "/store/data/Run2012D/JetHT/AOD/22Jan2013-v1/10002/D47C39F3-A197-E211-94A5-E0CB4E1A118B.root"]
+    else:
+        globaltag = globaltag if globaltag else 'START53_V27::All'
+        filename = 'root://xrootd.unl.edu//store/mc/Summer12_DR53X/QCD_Pt-15to3000_TuneZ2star_Flat_8TeV_pythia6/AODSIM/PU_S10_START53_V7A-v1/0000/004CB136-A1D3-E111-B958-0030487E4B8D.root'
 
 
 # Basic process setup ----------------------------------------------------------
@@ -31,7 +31,7 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
 print "Starting Kappa Skim"
 
 print "GlobalTag: {0}".format(globaltag)
-print "Datatype: {0}".format(datatype)
+print "Datatype is data: {0}".format(is_data)
 
 #-------------------------------------------------------------------------------
 # Global Tag
@@ -44,7 +44,6 @@ process.load('Configuration.Geometry.GeometryPilot2_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 process.load("Configuration.StandardSequences.Reconstruction_cff")
 process.GlobalTag.globaltag = globaltag
-
 
 process.path = cms.Path()
 
@@ -121,7 +120,7 @@ process.load("Kappa.Producers.KTuple_cff")
 
 process.kappatuple = cms.EDAnalyzer('KTuple',
     process.kappaTupleDefaultsBlock,
-    outputFile = cms.string('skim.root'),
+    outputFile = cms.string(options.outputfilename),
 )
 process.kappatuple.BasicJets.whitelist = cms.vstring("recoPFJets_ak5PFJets.*", "recoPFJets_ak7PFJets.*")
 # process.kappatuple.GenJets.whitelist = cms.vstring("recoGenJets_ak5GenJets.*", "recoGenJets_ak7GenJets.*")
