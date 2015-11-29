@@ -21,11 +21,8 @@ def submit(config):
         print "Failed submitting task: %s" % (cle)
 
 def crab_command(command):
-    for dir in glob('/nfs/dust/cms/user/gsieber/crab_kappa_skim-2015-10-14/*'):
-        try:
-            crabCommand(command, dir=dir)
-        except Exception:
-            pass
+    for dir in glob('/nfs/dust/cms/user/gsieber/crab_kappa_skim-2015-11-29_8TEV/*'):
+        crabCommand(command, dir=dir)
 
 def check_path(path):
     if os.path.exists(path):
@@ -47,7 +44,7 @@ def submission():
     from CRABClient.UserUtilities import config
     config = config()
 
-    config.General.workArea = '/nfs/dust/cms/user/gsieber/crab_kappa_skim-2015-11-28'
+    config.General.workArea = '/nfs/dust/cms/user/gsieber/crab_kappa_skim-2015-11-29_8TEV'
     check_path(config.General.workArea)
     config.General.transferOutputs = True
     config.General.transferLogs = True
@@ -61,7 +58,7 @@ def submission():
     config.Data.inputDBS = 'global'
     config.Data.splitting = 'FileBased'
     config.Data.unitsPerJob = 10
-    config.Data.outLFNDirBase = '/store/user/sieber/SKIMS_JETS_2015/2015-11-28'
+    config.Data.outLFNDirBase = '/store/user/sieber/SKIMS_JETS_2015/2015-11-29_8TEV'
     config.Data.publication = False
 
     config.Site.storageSite = "T2_DE_DESY"
