@@ -148,7 +148,7 @@ process.load("RecoJets.JetProducers.ak5PFJets_cfi")
 pfbase_jet = process.ak5PFJets.clone(srcPVs = 'goodOfflinePrimaryVertices', doAreaFastjet=True)
 
 # create Jet variants
-for param in (4, 5, 8):
+for param in (4, 5, 7, 8):
     # PFJets
     algos_and_tags = [("", input_PFCandidates), ("CHS", 'pfNoPileUp')]
     for algo, input_tag in algos_and_tags:
