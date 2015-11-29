@@ -1,0 +1,73 @@
+{
+    "JETHT_2015D_V3" : {
+        "dataset"   : "/JetHT/Run2015D-PromptReco-v3/AOD",
+        "globaltag" : "GR_R_74_V12",
+        "is_data"   : true
+    },
+    "JETHT_2015D_V4" : {
+        "dataset"   : "/JetHT/Run2015D-PromptReco-v4/AOD",
+        "globaltag" : "GR_R_74_V12",
+        "is_data"   : true
+    },
+    "JETHT_2015E_V1" : {
+        "dataset"   : "/JetHT/Run2015E-PromptReco-v1/AOD",
+        "globaltag" : "GR_R_74_V12",
+        "is_data"   : true
+    },
+    "QCDP8_CUETP8M1_FLAT_13TEV" : {
+        "dataset"   : "/QCD_Pt-15to7000_TuneCUETP8M1_Flat_13TeV_pythia8/RunIISpring15DR74-Asympt25nsRaw_MCRUN2_74_V9-v3/AODSIM",
+        "globaltag" : "MCRUN2_74_V8",
+        "is_data"   : false
+    },
+    "QCDP8_CUETP8M1_15TO30_13TEV" : {
+        "dataset"   : "/QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/AODSIM",
+        "globaltag" : "MCRUN2_74_V8",
+        "is_data"   : false
+    },
+    "QCDP8_CUETP8M1_30TO50_13TEV" : {
+        "dataset"   : "/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/AODSIM",
+        "globaltag" : "MCRUN2_74_V8",
+        "is_data"   : false
+    },
+    "QCDP8_CUETP8M1_50TO80_13TEV" : {
+        "dataset"   : "/QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/AODSIM",
+        "globaltag" : "MCRUN2_74_V8",
+        "is_data"   : false
+    },
+    "QCDP8_CUETP8M1_80TO170_13TEV" : {
+        "dataset"   : "/QCD_Pt_80to170_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/AODSIM",
+        "globaltag" : "MCRUN2_74_V8",
+        "is_data"   : false
+    },
+    "QCDP8_CUETP8M1_170TO300_13TEV" : {
+        "dataset"   : "/QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/AODSIM",
+        "globaltag" : "MCRUN2_74_V8",
+        "is_data"   : false
+    },
+    "QCDP8_CUETP8M1_300TO470_13TEV" : {
+        "dataset"   : "/QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/AODSIM",
+        "globaltag" : "MCRUN2_74_V8",
+        "is_data"   : false
+    },
+    "QCDP8_CUETP8M1_470TO600_13TEV" : {
+        "dataset"   : "/QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/AODSIM",
+        "globaltag" : "MCRUN2_74_V8",
+        "is_data"   : false
+    },
+    "QCDP8_CUETP8M1_600TO800_13TEV" : {
+        "dataset"   : "/QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/AODSIM",
+        "globaltag" : "MCRUN2_74_V8",
+        "is_data"   : false
+    },
+    "QCDP8_CUETP8M1_800TO1000_13TEV" : {
+        "dataset"   : "/QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/AODSIM",
+        "globaltag" : "MCRUN2_74_V8",
+        "is_data"   : false
+    },
+    "QCDP8_CUETP8M1_800TO1000_13TEV" : {
+        "dataset"   : "/QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v2/AODSIM",
+        "globaltag" : "MCRUN2_74_V8",
+        "is_data"   : false
+    }
+}
+
