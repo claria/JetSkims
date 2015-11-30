@@ -1,6 +1,6 @@
 {
     "QCDP6_Z2S_FLAT" : {
-        "dataset"   : "/QCD_Pt-30to50_Tune4C_8TeV_pythia8/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM",
+        "dataset"   : "/QCD_Pt-15to3000_TuneZ2star_Flat_8TeV_pythia6/Summer12_DR53X-PU_S10_START53_V7A-v1/AODSIM",
         "globaltag" : "START53_V27::All",
         "is_data"   : false
     },
